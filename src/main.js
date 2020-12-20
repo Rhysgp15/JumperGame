@@ -285,6 +285,10 @@ class playGame extends Phaser.Scene
 
             const wingManEnemy = wingManEnemies.create(x, y, 'WingManIMG')
             wingManEnemy.scale = .5
+            wingManEnemy.elapsed = 0
+            wingManEnemy.turnFreq = 3
+            wingManEnemy.speed = 50
+            wingManEnemy.body.velocity.x = wingManEnemy.speed
 
             const body = wingManEnemy.body
             body.updateFromGameObject()
@@ -429,7 +433,7 @@ class playGame extends Phaser.Scene
             if (wingManEnemy.y >= scrollY + wingManSpawnDistance) {
                 
                 wingManEnemy.enableBody(true, Phaser.Math.Between(80, 400), y, true, true);
-                
+            
             }
         })
     }
@@ -441,7 +445,9 @@ class playGame extends Phaser.Scene
         }
     }
     
+    
     update(time, delta) {
+        
         //timer
         /*
         timer +=delta;
@@ -455,6 +461,17 @@ class playGame extends Phaser.Scene
             timer = 0
         }
         */
+
+        wingManEnemies.children.iterate(wingManEnemy => {
+            wingManEnemy.elapsed += delta/1000
+            if (wingManEnemy.elapsed >= wingManEnemy.turnFreq) {
+                wingManEnemy.elapsed -= wingManEnemy.turnFreq
+                wingManEnemy.setVelocityX(wingManEnemy.body.velocity.x * -1)
+                console.log(wingManEnemy.elapsed)
+                console.log(wingManEnemy.turnFreq)
+                console.log(wingManEnemy.speed)
+            }
+        });
 
         //player movement
         if (cursors.left.isDown) {
@@ -506,7 +523,7 @@ class playGame extends Phaser.Scene
         })
 
         
-        wingManEnemies.setVelocityX(50)
+        //wingManEnemies.setVelocityX(50)
         /*
         this.add.tween({
             targets: wingManEnemies.getChildren().map(function (wingManEnemies) { return wingManEnemies.body.velocity }),
